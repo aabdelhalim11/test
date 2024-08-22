@@ -1,0 +1,79 @@
+// ==UserScript==
+// @name         Click Multiple Buttons Sequentially
+// @namespace    http://tampermonkey.net/
+// @version      1.3
+// @description  Automatically click the first, second, and third buttons on the page sequentially
+// @author       Your Name
+// @match        https://linkvertise.com/202348/hoho-hub-roblox-script
+// @grant        none
+// ==/UserScript==
+
+(function() {
+    'use strict';
+
+    // Flags to check if buttons have been clicked
+    let hasClickedFirstButton = false;
+    let hasClickedSecondButton = false;
+    let hasClickedThirdButton = false;
+
+    function clickFirstButton() {
+        if (hasClickedFirstButton) return; // Exit if the first button has already been clicked
+
+        var buttons = document.querySelectorAll(".ng-star-inserted");
+        buttons.forEach(function(button) {
+            if (button.textContent.trim() === "Get Hoho Hub Roblox Script") {
+                button.click();
+                console.log('First button clicked!');
+                hasClickedFirstButton = true; // Set flag to true after clicking the first button
+                // Delay clicking the second button until the first is clicked
+                setTimeout(clickSecondButton, 4000); // 4 seconds delay
+            }
+        });
+    }
+
+    function clickSecondButton() {
+        if (hasClickedSecondButton) return; // Exit if the second button has already been clicked
+
+        // Select the second button using its exact attributes and class
+        var secondButton = document.querySelector('button.lv-orange[style*="padding: 0px 0.75em; --button-width: 100%"]');
+
+        if (secondButton) {
+            secondButton.click();
+            console.log('Second button clicked!');
+            hasClickedSecondButton = true; // Set flag to true after clicking the second button
+            // Delay clicking the third button until the second is clicked
+            setTimeout(clickThirdButton, 4000); // 4 seconds delay
+        } else {
+            console.log('Second button not found.');
+            // Retry after 2 seconds if the button wasn't found
+            setTimeout(clickSecondButton, 2000);
+        }
+    }
+
+    function clickThirdButton() {
+        if (hasClickedThirdButton) return; // Exit if the third button has already been clicked
+
+        // Select the third button using its exact attributes and class
+        var thirdButton = document.querySelector('button.cta--btn.lv-orange[style*="--button-width: auto;"]');
+
+        if (thirdButton) {
+            thirdButton.click();
+            console.log('Third button clicked!');
+            hasClickedThirdButton = true; // Set flag to true after clicking the third button
+        } else {
+            console.log('Third button not found.');
+            // Retry after 2 seconds if the button wasn't found
+            setTimeout(clickThirdButton, 2000);
+        }
+    }
+
+    function tryClicking() {
+        if (!hasClickedFirstButton) { // Proceed only if the first button hasn't been clicked
+            clickFirstButton();
+            setTimeout(tryClicking, 2000); // Retry after 2 seconds if the first button not found
+        }
+    }
+
+    // Start the clicking process
+    tryClicking();
+})();
